@@ -1,5 +1,7 @@
 package com.powilliam.weather
 
+import android.location.Location
+import android.util.Log
 import androidx.lifecycle.*
 import com.powilliam.weather.domain.http.OpenWeatherService
 import com.powilliam.weather.domain.models.Weather
@@ -15,7 +17,9 @@ class WeatherViewModel @Inject constructor (private val weatherService: OpenWeat
         get() = _state
 
     // TODO: Implement
-    fun getWeatherFromCurrentLocation() = viewModelScope.launch {}
+    fun getWeatherFromCurrentLocation(location: Location) = viewModelScope.launch {
+        Log.i("GetWeatherFromCurrentLocation", "lat ${location.latitude}, lon ${location.longitude}")
+    }
 }
 
 sealed class ViewModelState {
