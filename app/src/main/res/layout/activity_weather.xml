@@ -1,9 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools">
-
+<!-- TODO: Implement -->
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
     <data>
         <variable
             name="state"
@@ -14,59 +11,6 @@
         android:id="@+id/coordinator_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
-
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
-
-            <com.google.android.material.progressindicator.CircularProgressIndicator
-                android:id="@+id/progress_indicator"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:indeterminate="true"
-                app:indicatorSize="24dp"
-                app:trackThickness="2dp"
-                app:state="@{state}"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <TextView
-                android:id="@+id/outside_text"
-                style="@style/TextAppearance.Body2"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/outside"
-                app:state="@{state}"
-                app:isWeatherText="@{false}"
-                app:layout_constraintBottom_toTopOf="@+id/temperature_text"
-                app:layout_constraintStart_toStartOf="@+id/temperature_text" />
-
-            <TextView
-                android:id="@+id/temperature_text"
-                style="@style/TextAppearance.Headline4"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                app:state="@{state}"
-                app:isWeatherText="@{true}"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                tools:text="32°C" />
-
-        </androidx.constraintlayout.widget.ConstraintLayout>
-
-        <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/floating_action_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom|end"
-            android:layout_margin="8dp"
-            android:src="@drawable/ic_round_refresh_24"
-            android:contentDescription="@string/get_weather_details"
-            app:state="@{state}"/>
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 </layout>
