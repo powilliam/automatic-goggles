@@ -12,7 +12,7 @@ android {
 
     defaultConfig {
         applicationId = "com.powilliam.weather"
-        minSdk = 26
+        minSdk = 21
         targetSdk = 30
         versionCode = 1
         versionName = "1.0"
@@ -30,7 +30,6 @@ android {
         }
     }
     buildFeatures {
-        dataBinding = true
         compose = true
     }
     compileOptions {
@@ -67,7 +66,6 @@ dependencies {
 
     // Interface
     implementation("com.google.android.material:material:1.3.0")
-    implementation("androidx.swiperefreshlayout:swiperefreshlayout:1.1.0")
 
     // Lifecycle
     implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycleVersion")

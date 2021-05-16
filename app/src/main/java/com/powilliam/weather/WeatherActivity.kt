@@ -4,6 +4,8 @@ import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.compose.animation.Crossfade
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
@@ -17,12 +19,13 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.ViewModel
 import com.powilliam.weather.domain.models.Weather
 import com.powilliam.weather.ui.theme.WeatherTheme
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
+
+typealias OnFailure = suspend CoroutineScope.(reason: String) -> Unit
 
 @AndroidEntryPoint
 class WeatherActivity : AppCompatActivity() {
@@ -43,7 +46,7 @@ class WeatherActivity : AppCompatActivity() {
 }
 
 @Composable
-fun WeatherActivityContent(weatherViewModel: WeatherViewModel) {
+private fun WeatherActivityContent(weatherViewModel: WeatherViewModel) {
     val state: State<ViewModelState?> = weatherViewModel.state.observeAsState()
     val snackbarHostState by remember { mutableStateOf(SnackbarHostState()) }
 
@@ -71,9 +74,9 @@ fun WeatherActivityContent(weatherViewModel: WeatherViewModel) {
                 )
             },
         ) {
-            ScreenContent(
+            Scenes(
                 state = state.value ?: ViewModelState.IDLE,
-                onFailed = {
+                onFailure = {
                     snackbarHostState.showSnackbar(message = it, duration = SnackbarDuration.Short)
                 }
             )
@@ -81,62 +84,79 @@ fun WeatherActivityContent(weatherViewModel: WeatherViewModel) {
     }
 }
 
+class FakeWeatherProvider : PreviewParameterProvider<Weather> {
+
+    override val values: Sequence<Weather>
+        get() = sequenceOf(Weather(main = Weather.Main(temp = 32.0)))
+}
+
 @Composable
-fun ScreenContent(
-    state: ViewModelState,
-    onFailed: suspend CoroutineScope.(reason: String) -> Unit = {},
-    coroutineScope: CoroutineScope = rememberCoroutineScope(),
+private fun CenteredContent(
+    modifier: Modifier = Modifier,
+    content: @Composable ColumnScope.() -> Unit
 ) {
     Column(
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = Modifier.fillMaxSize(),
+        modifier = modifier,
+        content = content
+    )
+}
+
+@Preview
+@Composable
+private fun LoadingScene(modifier: Modifier = Modifier) {
+    CenteredContent(
+        modifier = modifier
+            .fillMaxSize()
     ) {
-        when (state) {
-            is ViewModelState.InProgress -> {
-                Column(
-                    verticalArrangement = Arrangement.Center,
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                ) {
-                    CircularProgressIndicator(
-                        strokeWidth = 2.dp,
-                        modifier = Modifier.size(24.dp)
-                    )
-                }
-            }
-            is ViewModelState.Success -> {
-                Column {
-                    Text(text = "Outside", style = MaterialTheme.typography.body2)
-                    Text(text = "${state.weather.main.temp}°C", style = MaterialTheme.typography.h4)
-                }
-            }
-            is ViewModelState.Failed -> {
-                coroutineScope.launch {
-                    onFailed(state.reason)
-                }
-            }
-            else -> {}
-        }
+        CircularProgressIndicator(
+            strokeWidth = 2.dp,
+            modifier = Modifier.size(24.dp)
+        )
     }
 }
 
 @Preview
 @Composable
-private fun PreviewWithInProgressState() {
-    ScreenContent(state = ViewModelState.InProgress)
-}
-
-@Preview
-@Composable
-private fun PreviewWithSuccessState() {
-    val weather = Weather(
-        main = Weather.Main(temp = 32.1)
+private fun SuccessScene(
+    @PreviewParameter(
+        provider = FakeWeatherProvider::class
     )
-    ScreenContent(state = ViewModelState.Success(weather = weather))
+    weather: Weather,
+    modifier: Modifier = Modifier
+) {
+    CenteredContent(
+        modifier = modifier
+            .fillMaxSize()
+    ) {
+        Column {
+            Text(text = "Outside", style = MaterialTheme.typography.body2)
+            Text(text = "${weather.main.temp}°C", style = MaterialTheme.typography.h4)
+        }
+    }
 }
 
-@Preview
 @Composable
-private fun PreviewWithFailedState() {
-    ScreenContent(state = ViewModelState.Failed(reason = "Failed"))
+private fun Scenes(
+    state: ViewModelState,
+    onFailure: OnFailure,
+    coroutineScope: CoroutineScope = rememberCoroutineScope(),
+) {
+    Crossfade(targetState = state) { state: ViewModelState ->
+        when (state) {
+            is ViewModelState.InProgress -> {
+                LoadingScene()
+            }
+            is ViewModelState.Success -> {
+                SuccessScene(weather = state.weather)
+            }
+            is ViewModelState.Failed -> {
+                coroutineScope.launch {
+                    onFailure(state.reason)
+                }
+            }
+            else -> {}
+        }
+    }
 }
