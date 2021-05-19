@@ -4,7 +4,6 @@ import android.Manifest
 import android.content.pm.PackageManager
 import android.location.Location
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
@@ -12,13 +11,13 @@ import androidx.databinding.DataBindingUtil
 import com.google.android.gms.location.*
 import com.google.android.gms.tasks.CancellationToken
 import com.google.android.gms.tasks.OnTokenCanceledListener
+import com.google.android.material.snackbar.Snackbar
 import com.powilliam.weather.databinding.ActivityWeatherBinding
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
 @AndroidEntryPoint
 class WeatherActivity : AppCompatActivity() {
-
     private lateinit var binding: ActivityWeatherBinding
     @Inject lateinit var fusedLocationProviderClient: FusedLocationProviderClient
     private val weatherViewModel: WeatherViewModel by viewModels()
@@ -29,6 +28,7 @@ class WeatherActivity : AppCompatActivity() {
         binding = DataBindingUtil
             .setContentView(this, R.layout.activity_weather)
         binding.lifecycleOwner = this
+        binding.executePendingBindings()
 
         observeWeatherViewModelState()
     }
@@ -56,9 +56,8 @@ class WeatherActivity : AppCompatActivity() {
 
     private fun getWeatherFromCurrentLocation() {
         when {
-            (ContextCompat.checkSelfPermission(this, PERMISSIONS[0]) == PackageManager.PERMISSION_GRANTED
-                    && ContextCompat.checkSelfPermission(this, PERMISSIONS[1]) == PackageManager.PERMISSION_GRANTED) -> {
-                Log.i("OnStart", "Granted")
+            (ContextCompat.checkSelfPermission(this, LOCATION_PERMISSIONS[0]) == PackageManager.PERMISSION_GRANTED
+                    && ContextCompat.checkSelfPermission(this, LOCATION_PERMISSIONS[1]) == PackageManager.PERMISSION_GRANTED) -> {
                 val task = fusedLocationProviderClient.getCurrentLocation(
                     LocationRequest.PRIORITY_HIGH_ACCURACY,
                     object : CancellationToken() {
@@ -76,17 +75,24 @@ class WeatherActivity : AppCompatActivity() {
                         weatherViewModel.getWeatherFromCurrentLocation(it)
                     }
                 }
+
+                task.addOnFailureListener { exception: Exception ->
+                    exception.message?.let { message: String ->
+                        Snackbar
+                            .make(this, binding.coordinatorLayout, message, Snackbar.LENGTH_LONG)
+                            .show()
+                    }
+                }
             }
             else -> {
-                Log.i("OnStart", "Unauthorized")
-                requestPermissions(PERMISSIONS, LOCATION_PERMISSION_CODE)
+                requestPermissions(LOCATION_PERMISSIONS, LOCATION_PERMISSION_CODE)
             }
         }
     }
 
     companion object {
         const val LOCATION_PERMISSION_CODE = 101
-        val PERMISSIONS: Array<String>
+        val LOCATION_PERMISSIONS: Array<String>
             get() = arrayOf(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION)
     }
 }
