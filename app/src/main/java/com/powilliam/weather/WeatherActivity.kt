@@ -9,9 +9,11 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.add
 import androidx.fragment.app.commit
 import androidx.fragment.app.replace
+import androidx.lifecycle.lifecycleScope
 import com.google.android.material.snackbar.Snackbar
 import com.powilliam.weather.databinding.ActivityWeatherBinding
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.collect
 
 @AndroidEntryPoint
 class WeatherActivity : AppCompatActivity() {
@@ -37,25 +39,31 @@ class WeatherActivity : AppCompatActivity() {
 
     override fun onStart() {
         super.onStart()
-        observeWeatherViewModelState()
+        collectWeatherViewModelState()
         weatherViewModel.getWeatherFromCurrentLocation()
     }
 
-    private fun observeWeatherViewModelState() {
-        weatherViewModel.state.observe(this) { state: ViewModelState ->
-            binding.state = state
-
-            when (state) {
-                is ViewModelState.Failed -> {
-                    Snackbar
-                        .make(this, binding.coordinatorLayout, state.reason, Snackbar.LENGTH_LONG)
-                        .show()
+    private fun collectWeatherViewModelState() {
+        lifecycleScope.launchWhenStarted {
+            weatherViewModel.state.collect { state: ViewModelState ->
+                binding.state = state
+                when (state) {
+                    is ViewModelState.Failed -> {
+                        Snackbar
+                            .make(
+                                this@WeatherActivity,
+                                binding.coordinatorLayout,
+                                state.reason,
+                                Snackbar.LENGTH_LONG
+                            )
+                            .show()
+                    }
+                    is ViewModelState.InProgress -> replaceCurrentFragmentOnContainerView<LoadingFragment>()
+                    is ViewModelState.Success -> replaceCurrentFragmentOnContainerView<WeatherFragment>(
+                        bundleOf(WeatherFragment.TEMPERATURE_KEY to state.weather.main.temp)
+                    )
+                    else -> replaceCurrentFragmentOnContainerView<EmptyFragment>()
                 }
-                is ViewModelState.InProgress -> replaceCurrentFragmentOnContainerView<LoadingFragment>()
-                is ViewModelState.Success -> replaceCurrentFragmentOnContainerView<WeatherFragment>(
-                    bundleOf(WeatherFragment.TEMPERATURE_KEY to state.weather.main.temp)
-                )
-                else -> replaceCurrentFragmentOnContainerView<EmptyFragment>()
             }
         }
     }
