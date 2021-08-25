@@ -2,4 +2,5 @@
     <string name="app_name">Weather</string>
     <string name="outside">Outside</string>
     <string name="get_weather_details">Get weather details</string>
+    <string name="celsius_temperature">%s°C</string>
 </resources>

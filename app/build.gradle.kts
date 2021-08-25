@@ -31,6 +31,7 @@ android {
     }
     buildFeatures {
         dataBinding = true
+        viewBinding = true
     }
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_1_8
@@ -44,10 +45,12 @@ android {
 dependencies {
     val lifecycleVersion = "2.3.1"
     val hiltVersion = "2.38.1"
+    val fragmentVersion = "1.3.6"
 
     // Core
     implementation("androidx.core:core-ktx:1.6.0")
     implementation("androidx.appcompat:appcompat:1.3.1")
+    implementation("androidx.fragment:fragment-ktx:$fragmentVersion")
 
     // Interface
     implementation("com.google.android.material:material:1.4.0")
