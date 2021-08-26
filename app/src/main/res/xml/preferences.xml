@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto">
+<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
     <ListPreference
-        app:defaultValue="@string/celsius"
+        app:defaultValue="@string/standard"
         app:entries="@array/temperature_units_keys"
         app:entryValues="@array/temperature_units_values"
         app:key="@string/unit_of_measurement_key"
