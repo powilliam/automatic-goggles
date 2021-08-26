@@ -1,6 +1,6 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Base application theme. -->
-    <style name="Theme.Weather" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+    <style name="Theme.Weather" parent="Theme.MaterialComponents.Light.NoActionBar">
         <!-- Primary brand color. -->
         <item name="colorPrimary">@color/purple_500</item>
         <item name="colorPrimaryVariant">@color/purple_700</item>
@@ -15,6 +15,29 @@
         <!-- Customize your theme here. -->
         <item name="android:navigationBarColor">@color/white</item>
         <item name="android:windowLightNavigationBar" tools:targetApi="o_mr1">true</item>
+        <item name="toolbarStyle">@style/Widget.App.Toolbar</item>
+    </style>
+
+    <!-- Widgets -->
+    <style name="Widget.App.Toolbar" parent="Widget.MaterialComponents.Toolbar.Primary">
+        <item name="materialThemeOverlay">@style/ThemeOverlay.App.Toolbar</item>
+        <item name="titleTextAppearance">@style/TextAppearance.Headline6</item>
+    </style>
+    <!-- Widgets -->
+
+    <!-- ThemeOverlays -->
+    <style name="ThemeOverlay.App.Toolbar" parent="">
+        <item name="colorPrimary">@color/white</item>
+        <item name="colorOnPrimary">@color/black</item>
+    </style>
+    <!-- ThemeOverlays -->
+
+    <!-- TextAppearance -->
+    <style name="TextAppearance.Headline6" parent="TextAppearance.MaterialComponents.Headline6">
+        <item name="fontFamily">@font/karla_medium</item>
+        <item name="android:fontFamily">@font/karla_medium</item>
+        <item name="android:textSize">21sp</item>
+        <item name="android:textColor">@color/black</item>
     </style>
 
     <style name="TextAppearance.Headline4" parent="TextAppearance.MaterialComponents.Headline4">
@@ -30,4 +53,5 @@
         <item name="android:textSize">16sp</item>
         <item name="android:textColor">@color/black</item>
     </style>
+    <!-- TextAppearance -->
 </resources>

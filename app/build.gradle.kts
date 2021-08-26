@@ -52,6 +52,9 @@ dependencies {
     implementation("androidx.appcompat:appcompat:1.3.1")
     implementation("androidx.fragment:fragment-ktx:$fragmentVersion")
 
+    // Preference
+    implementation("androidx.preference:preference-ktx:1.1.1")
+
     // Interface
     implementation("com.google.android.material:material:1.4.0")
     implementation("androidx.swiperefreshlayout:swiperefreshlayout:1.1.0")

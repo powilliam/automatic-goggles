@@ -3,4 +3,15 @@
     <string name="outside">Outside</string>
     <string name="get_weather_details">Get weather details</string>
     <string name="celsius_temperature">%s°C</string>
+    <string name="fahrenheit_temperature">%s°F</string>
+    <string name="kelvin_temperature">%sK</string>
+    <string name="settings">Settings</string>
+    <string name="celsius">Celsius</string>
+    <string name="fahrenheit">Fahrenheit</string>
+    <string name="kelvin">Kelvin</string>
+    <string name="unit_of_measurement">Unit of measurement</string>
+    <string name="unit_of_measurement_key">unit_of_measurement</string>
+    <string name="standard">standard</string>
+    <string name="imperial">imperial</string>
+    <string name="metric">metric</string>
 </resources>

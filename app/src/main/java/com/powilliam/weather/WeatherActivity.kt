@@ -1,6 +1,8 @@
 package com.powilliam.weather
 
+import android.content.Intent
 import android.os.Bundle
+import android.view.MenuItem
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.os.bundleOf
@@ -32,6 +34,7 @@ class WeatherActivity : AppCompatActivity() {
             add<EmptyFragment>(R.id.fragment_container_view)
         }
 
+        binding.toolbar.setOnMenuItemClickListener { onMenuItemClickListener(it) }
         binding.floatingActionButton.setOnClickListener {
             weatherViewModel.getWeatherFromCurrentLocation()
         }
@@ -41,6 +44,18 @@ class WeatherActivity : AppCompatActivity() {
         super.onStart()
         collectWeatherViewModelState()
         weatherViewModel.getWeatherFromCurrentLocation()
+    }
+
+    private fun onMenuItemClickListener(menuItem: MenuItem): Boolean {
+        return when (menuItem.itemId) {
+            R.id.settings -> {
+                Intent(this, SettingsActivity::class.java).also { settingsActivityIntent ->
+                    startActivity(settingsActivityIntent)
+                }
+                true
+            }
+            else -> true
+        }
     }
 
     private fun collectWeatherViewModelState() {
@@ -60,7 +75,10 @@ class WeatherActivity : AppCompatActivity() {
                     }
                     is ViewModelState.InProgress -> replaceCurrentFragmentOnContainerView<LoadingFragment>()
                     is ViewModelState.Success -> replaceCurrentFragmentOnContainerView<WeatherFragment>(
-                        bundleOf(WeatherFragment.TEMPERATURE_KEY to state.weather.main.temp)
+                        bundleOf(
+                            WeatherFragment.TEMPERATURE_KEY to state.weather.main.temp,
+                            WeatherFragment.UNIT_OF_MEASUREMENT_KEY to state.unit
+                        )
                     )
                     else -> replaceCurrentFragmentOnContainerView<EmptyFragment>()
                 }

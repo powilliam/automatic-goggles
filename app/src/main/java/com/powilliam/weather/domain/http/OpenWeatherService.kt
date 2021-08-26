@@ -12,7 +12,7 @@ interface OpenWeatherService {
     fun getWeatherFromGeographicCoordinates(
         @Query("lat") lat: String,
         @Query("lon") lon: String,
-        @Query("units") units: String? = "metric",
+        @Query("units") units: String? = null,
         @Query("appid") appid: String? = BuildConfig.OPEN_WEATHER_API_KEY
     ): Call<Weather>
 
